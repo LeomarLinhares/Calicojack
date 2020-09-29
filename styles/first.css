@@ -1,0 +1,55 @@
+#blackBox {
+    background-color: rgb(39, 39, 39);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.250);
+    width: 20vw;
+    height: 40vh;
+
+    justify-self: center;
+    align-self: center;
+
+    display: grid;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    grid-template-areas: "title"
+                         "playername"
+                         "playercoins"
+                         "blackBoxBtn";
+
+    grid-area: bet;
+}
+
+#blackBox input {
+    margin-top: 4vh;
+    height: 4vh;
+    width: 15vw;
+    justify-self: center;
+    font-size: 2vh;
+
+    grid-area: playername;
+}
+
+#blackBox p {
+    color: white;
+    text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.247);
+    margin-top: 2vh;
+
+    justify-self: center;
+}
+
+#blackBox small {
+    font-size: 2vh;
+}
+
+#coinsInfo {
+    font-size: 2.3vh;
+    max-width: 11vw;
+
+    text-align: center;
+
+    grid-area: playercoins;
+}
+
+#startButton {
+    justify-self: center;
+
+    grid-area: blackBoxBtn;
+}

@@ -5,7 +5,9 @@ var secondDeck = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 var dealerHand = [];
 var playerHand = [];
 
-firstRender();
+var playerName = ''
+
+firstLoad();
 
 // ----- Função do botão HIT ----- //
 function hit(hand) {
@@ -56,12 +58,9 @@ function points(hand) {
 // ----- Função de comparação de pontos ----- //
 function compare(player, dealer) {
     if (player > dealer) {
-        alert(`Player venceu!
-        (${points(playerHand)} PLAYER x DEALER ${points(dealerHand)})`)
-        console.log("Player é o vencedor")
+        divAlert('renderFinalPage(true)', 'Você venceu!');
     } else {
-        //dealer vence
-        console.log("Player é o perdedor")
+        divAlert('renderFinalPage(false)', 'Você perdeu!');
     }
 
     //chamar render para Página de vítória ou derrota!
@@ -70,9 +69,9 @@ function compare(player, dealer) {
 // ----- Função que checa a vitória do player para redirecionar a renderização ----- //
 function playerWinChecker() {
     if (points(playerHand) > 21) {
-        alert('Você perdeu!')
+        divAlert('renderFinalPage(false)', 'Você perdeu!')
     } else if (points(playerHand) == 21) {
-        alert('Você venceu!')
+        divAlert('renderFinalPage(true)', 'Você ganhou!')
     }
 }
 
@@ -84,7 +83,7 @@ function playerWinChecker() {
 
 var app = document.querySelector('#app');
 
-function firstRender() {
+function firstLoad() {
     randomPick(firstDeck, playerHand);
     randomPick(secondDeck, playerHand);
     dealerHand[0] = '?';
@@ -132,7 +131,6 @@ function playerRender(points) {
         playerCards.appendChild(dealerCardDiv);
     }
 
-    
     player.appendChild(playerCards);
     player.innerHTML += `<p>Player: ${points}</p>`
     app.appendChild(player);
@@ -157,6 +155,47 @@ function gameButtonsRender() {
     buttons.appendChild(hitButton);
     buttons.appendChild(standButton);
     app.appendChild(buttons);
+}
+
+// Função de caixa de alert //
+function divAlert(renderFunction, msg) {
+    let divBlock = document.createElement('div');
+    divBlock.setAttribute('id', 'divBlock');
+    document.body.appendChild(divBlock);
+
+    let divAlertBox = document.createElement('div');
+    let buttonAlertBox = document.createElement('button')
+    buttonAlertBox.setAttribute('onclick', `${renderFunction}`)
+    buttonAlertBox.innerHTML = 'OK!'
+
+    divAlertBox.setAttribute('id', 'divAlertBox');
+    divAlertBox.innerHTML = `<p>${msg}</p>`;
+    divAlertBox.appendChild(buttonAlertBox)
+    document.body.appendChild(divAlertBox);
+}
+
+function renderFirstPage() {
+    let boxName = document.createElement('div');
+    boxName.setAttribute('id', 'blackBox');
+    app.appendChild(boxName);
+    boxName.innerHTML = `<p>Calicojack<br><small>from Stardew Valley</small></p> `;
+
+    let inputName = document.createElement('input');
+    inputName.setAttribute('id', 'inputName')
+    inputName.setAttribute('type', 'text');
+    inputName.setAttribute('placeholder', 'Enter your name here');
+    boxName.appendChild(inputName);
+
+    let coinsInfo = document.createElement('p');
+    coinsInfo.innerHTML = 'New players start with 500 coins.';
+    coinsInfo.setAttribute('id', 'coinsInfo')
+    boxName.appendChild(coinsInfo);
+
+    let startButton = document.createElement('button');
+    startButton.setAttribute('id', 'startButton');
+    startButton.setAttribute('onclick', 'startBtnFunc()')
+    startButton.innerHTML = 'Start!'
+    boxName.appendChild(startButton);
 
 }
 
@@ -167,4 +206,76 @@ function renderAppMain() {
     gameButtonsRender();
 }
 
-renderAppMain();
+function renderFinalPage(result) {
+    // Limpeza do App //
+    document.body.removeChild(divAlertBox);
+    document.body.removeChild(divBlock);
+    let appDivDel = document.querySelector('#app');
+        appDivDel.parentElement.removeChild(appDivDel);
+
+        app.innerHTML = ''
+        document.body.appendChild(app)
+
+    // Preenchimento do App
+    let divResultMsg = document.createElement('div');
+    divResultMsg.setAttribute('id', 'divResultMsg');
+
+    let divResultCoins = document.createElement('div');
+    divResultCoins.setAttribute('id', 'divResultCoins');
+
+    let divResultButtons = document.createElement('div');
+    divResultButtons.setAttribute('id', 'divResultButtons');
+    let divResultBtn2OrN = document.createElement('button');
+    let divResultBtnNewGame = document.createElement('button');
+    let divResultBtnQuit = document.createElement('button');
+    divResultBtn2OrN.setAttribute('onclick', 'doubleOrNothing()');
+    divResultBtnNewGame.setAttribute('onclick', 'newGame()');
+    divResultBtnQuit.setAttribute('onclick', 'quit()');
+    divResultBtn2OrN.setAttribute('id', 'btn2OrN');
+    divResultBtnNewGame.setAttribute('id', 'btnNewGame');
+    divResultBtnQuit.setAttribute('id', 'btnQuit');
+    divResultButtons.appendChild(divResultBtn2OrN);
+    divResultButtons.appendChild(divResultBtnNewGame);
+    divResultButtons.appendChild(divResultBtnQuit);
+
+
+    if (result == true) {
+        divResultMsg.innerHTML = `<p>That's a Calicojack!<br>You win!</p>`;
+        divResultCoins.innerHTML = `<p>Result: 100 coins</p>`;
+    } else {
+        divResultMsg.innerHTML = `<p>You lose!</p>`;
+        divResultCoins.innerHTML = `<p>Result: -100 coins</p>`;
+    }
+
+    divResultBtn2OrN.innerHTML = 'Double or Nothing';
+    divResultBtnNewGame.innerHTML = 'New Game';
+    divResultBtnQuit.innerHTML = 'Quit';
+
+    app.appendChild(divResultMsg);
+    app.appendChild(divResultCoins);
+    app.appendChild(divResultButtons);
+    
+}
+
+
+function startBtnFunc() {
+    // Salvar nome
+    playerName = document.querySelector('#blackBox input').value;
+
+    // Verificar preenchimento do campo Nome
+    if (playerName == "") {
+        alert('Please enter your name before starting.')
+    } else {
+        // Limpeza do App
+        let appDivDel = document.querySelector('#app');
+        appDivDel.parentElement.removeChild(appDivDel);
+
+        app.innerHTML = ''
+        document.body.appendChild(app);
+
+        // Preenchimento do App
+        renderAppMain();
+    }
+}
+
+renderFirstPage();
