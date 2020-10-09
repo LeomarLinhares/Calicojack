@@ -5,9 +5,20 @@ var secondDeck = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 var dealerHand = [];
 var playerHand = [];
 
-var playerName = ''
+var playerName = '';
+var playerCoins = 500;
+var thisBet = 0;
 
+// ----- Carregar primeiras informações ----- //
 firstLoad();
+
+// ----- Função que executa o primeiro carregamento ----- //
+function firstLoad() {
+    randomPick(firstDeck, playerHand);
+    randomPick(secondDeck, playerHand);
+    dealerHand[0] = '?';
+    randomPick(secondDeck, dealerHand);
+}
 
 // ----- Função do botão HIT ----- //
 function hit(hand) {
@@ -34,8 +45,9 @@ function stand() {
         hit(dealerHand);
     } while (points(dealerHand) < 18)
 
-    compare(playerHand, dealerHand);
+    
     dealerRender(points(dealerHand));
+    compare(points(playerHand), points(dealerHand));
 }
 
 // ----- Função de comprar carta aleatóriamente ----- //
@@ -45,6 +57,7 @@ function randomPick(originDeck, finalDeck) {
     finalDeck.push(randValue);
 }
 
+// ----- Função para calcular os pontos ----- //
 function points(hand) {
     let points = 0;
 
@@ -57,21 +70,29 @@ function points(hand) {
 
 // ----- Função de comparação de pontos ----- //
 function compare(player, dealer) {
-    if (player > dealer) {
+    if (dealer == 21) {
+        divAlert('renderFinalPage(false)', 'Você perdeu!');
+        playerCoins = parseInt(playerCoins) - parseInt(thisBet);
+    } else if (dealer > 21) {
         divAlert('renderFinalPage(true)', 'Você venceu!');
+        playerCoins = parseInt(playerCoins) + parseInt(thisBet);
+    } else if (player > dealer) {
+        divAlert('renderFinalPage(true)', 'Você venceu!');
+        playerCoins = parseInt(playerCoins) + parseInt(thisBet);
     } else {
         divAlert('renderFinalPage(false)', 'Você perdeu!');
+        playerCoins = parseInt(playerCoins) - parseInt(thisBet);
     }
-
-    //chamar render para Página de vítória ou derrota!
 }
 
 // ----- Função que checa a vitória do player para redirecionar a renderização ----- //
 function playerWinChecker() {
     if (points(playerHand) > 21) {
-        divAlert('renderFinalPage(false)', 'Você perdeu!')
+        divAlert('renderFinalPage(false)', 'Você perdeu!');
+        playerCoins = parseInt(playerCoins) - parseInt(thisBet);
     } else if (points(playerHand) == 21) {
-        divAlert('renderFinalPage(true)', 'Você ganhou!')
+        divAlert('renderFinalPage(true)', 'Você venceu!');
+        playerCoins = parseInt(playerCoins) + parseInt(thisBet);
     }
 }
 
@@ -79,17 +100,11 @@ function playerWinChecker() {
 // |--------- RENDERIZAÇÕES ---------| //
 // |#################################| //
 
-// ----- Game Page ----- //
-
+// -------------------- Selecionando a div app ------------------ //
+// ----- (vai ser útil para várias funções de renderização) ----- //
 var app = document.querySelector('#app');
 
-function firstLoad() {
-    randomPick(firstDeck, playerHand);
-    randomPick(secondDeck, playerHand);
-    dealerHand[0] = '?';
-    randomPick(secondDeck, dealerHand);
-}
-
+// ----- Renderizar a mão do desafiante ----- //
 function dealerRender(points) {
     if (typeof points == "string") {
         points = '?'
@@ -111,13 +126,15 @@ function dealerRender(points) {
     app.appendChild(dealer);
 }
 
+// ----- Renderizar campo com informação do valor apostado ----- //
 function betRender() {
     var bet = document.createElement('div');
     bet.setAttribute('id', 'bet');
-    bet.innerHTML = `<p><strong>Bet:</strong> 1000 coins</p>`
+    bet.innerHTML = `<p><strong>Bet:</strong> ${thisBet} coins</p>`
     app.appendChild(bet);
 }
 
+// ----- Renderizar a mão do jogador ----- //
 function playerRender(points) {
     var player = document.createElement('div');
     var playerCards = document.createElement('div');
@@ -132,10 +149,11 @@ function playerRender(points) {
     }
 
     player.appendChild(playerCards);
-    player.innerHTML += `<p>Player: ${points}</p>`
+    player.innerHTML += `<p>${playerName}: ${points}</p>`
     app.appendChild(player);
 }
 
+// ----- Renderizar os botões da tela do jogo ----- //
 function gameButtonsRender() {
     var buttons = document.createElement('div');
     var hitButton = document.createElement('button');
@@ -157,23 +175,51 @@ function gameButtonsRender() {
     app.appendChild(buttons);
 }
 
-// Função de caixa de alert //
+// ----- Função de caixa de alert ----- //
 function divAlert(renderFunction, msg) {
     let divBlock = document.createElement('div');
     divBlock.setAttribute('id', 'divBlock');
     document.body.appendChild(divBlock);
 
     let divAlertBox = document.createElement('div');
-    let buttonAlertBox = document.createElement('button')
-    buttonAlertBox.setAttribute('onclick', `${renderFunction}`)
-    buttonAlertBox.innerHTML = 'OK!'
+    let buttonAlertBox = document.createElement('button');
+    buttonAlertBox.setAttribute('onclick', `${renderFunction}`);
+    buttonAlertBox.innerHTML = 'OK!';
 
     divAlertBox.setAttribute('id', 'divAlertBox');
     divAlertBox.innerHTML = `<p>${msg}</p>`;
-    divAlertBox.appendChild(buttonAlertBox)
+    divAlertBox.appendChild(buttonAlertBox);
     document.body.appendChild(divAlertBox);
 }
 
+// ----- Função de caixa de aposta ----- //
+function betAlert(renderFunction, backFunction) {
+    let divBetButtons = document.createElement('div');
+    divBetButtons.setAttribute('id', 'divBetButtons');
+
+    let inputBet = document.createElement('input');
+    inputBet.setAttribute('value', 100)
+    inputBet.setAttribute('type', 'number');
+    inputBet.setAttribute('id', 'inputBet');
+
+    let divBetBox = document.createElement('div');
+    let btnBetBoxConfirm = document.createElement('button');
+    btnBetBoxConfirm.setAttribute('onclick', `${renderFunction}`);
+    btnBetBoxConfirm.innerHTML = 'Confirm Bet';
+    let btnBetBoxBack = document.createElement('button');
+    btnBetBoxBack.setAttribute('onclick', `${backFunction}`);
+    btnBetBoxBack.innerHTML = 'Back';
+
+    divBetBox.setAttribute('id', 'betAlertBox');
+    divBetBox.innerHTML = `<p>Hello, ${playerName}!<br>How much do you want to bet?<br>Available Coins: ${playerCoins}</p>`;
+    divBetButtons.appendChild(btnBetBoxConfirm);
+    divBetButtons.appendChild(btnBetBoxBack);
+    divBetBox.appendChild(inputBet);
+    divBetBox.appendChild(divBetButtons);
+    document.body.appendChild(divBetBox);
+}
+
+// ----- Renderizar a página inicial ----- //
 function renderFirstPage() {
     let boxName = document.createElement('div');
     boxName.setAttribute('id', 'blackBox');
@@ -199,6 +245,7 @@ function renderFirstPage() {
 
 }
 
+// ----- Renderizar o jogo, a página principal ----- //
 function renderAppMain() {
     dealerRender(points(dealerHand));
     betRender();
@@ -206,15 +253,16 @@ function renderAppMain() {
     gameButtonsRender();
 }
 
+// ----- Renderizar a tela de resultados, a página final ----- //
 function renderFinalPage(result) {
     // Limpeza do App //
     document.body.removeChild(divAlertBox);
     document.body.removeChild(divBlock);
     let appDivDel = document.querySelector('#app');
-        appDivDel.parentElement.removeChild(appDivDel);
+    appDivDel.parentElement.removeChild(appDivDel);
 
-        app.innerHTML = ''
-        document.body.appendChild(app)
+    app.innerHTML = ''
+    document.body.appendChild(app)
 
     // Preenchimento do App
     let divResultMsg = document.createElement('div');
@@ -238,6 +286,8 @@ function renderFinalPage(result) {
     divResultButtons.appendChild(divResultBtnNewGame);
     divResultButtons.appendChild(divResultBtnQuit);
 
+    divResultBtnQuit.setAttribute('onclick', 'quitBtnFunc()')
+
 
     if (result == true) {
         divResultMsg.innerHTML = `<p>That's a Calicojack!<br>You win!</p>`;
@@ -257,7 +307,46 @@ function renderFinalPage(result) {
     
 }
 
+function doubleOrNothing() {
+    dealerHand = [];
+    playerHand = [];
 
+    firstLoad();
+
+    if (playerCoins > thisBet * 2) {
+        thisBet *= 2;
+
+        let appDivDel = document.querySelector('#app');
+        appDivDel.parentElement.removeChild(appDivDel);
+
+        app.innerHTML = '';
+        document.body.appendChild(app);
+
+        renderAppMain();
+    } else {
+        alert('You do not have the required amount to double the bet.')
+    }
+
+}
+
+// ----- Função do botão QUIT da tela de resultados ----- //
+function quitBtnFunc() {
+    dealerHand = [];
+    playerHand = [];
+
+    playerName = '';
+
+    let appDivDel = document.querySelector('#app');
+    appDivDel.parentElement.removeChild(appDivDel);
+
+    app.innerHTML = '';
+    document.body.appendChild(app);
+
+    firstLoad();
+    renderFirstPage();
+}
+
+// ----- Função do botão START da tela inicial ----- //
 function startBtnFunc() {
     // Salvar nome
     playerName = document.querySelector('#blackBox input').value;
@@ -274,8 +363,40 @@ function startBtnFunc() {
         document.body.appendChild(app);
 
         // Preenchimento do App
+        betAlert('confirmBetBtnFunc()', 'backBetBtnFunc()');
+    }
+}
+
+function backBetBtnFunc() {
+    document.body.removeChild(betAlertBox);
+
+    let appDivDel = document.querySelector('#app');
+    appDivDel.parentElement.removeChild(appDivDel);
+
+    app.innerHTML = '';
+    document.body.appendChild(app);
+
+    renderFirstPage();
+}
+
+function confirmBetBtnFunc() {
+    if (document.querySelector('#inputBet').value > playerCoins) {
+        alert('You do not have that amount of coins.');
+    } else if (document.querySelector('#inputBet').value < 100) {
+        alert('The minimum bet is 100 coins.');
+    } else {
+        thisBet = parseInt(document.querySelector('#inputBet').value);
+        document.body.removeChild(betAlertBox);
+
+        let appDivDel = document.querySelector('#app');
+        appDivDel.parentElement.removeChild(appDivDel);
+    
+        app.innerHTML = '';
+        document.body.appendChild(app);
+
         renderAppMain();
     }
 }
 
+// ----- Chamando primeira página ----- //
 renderFirstPage();
