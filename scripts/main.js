@@ -329,6 +329,25 @@ function doubleOrNothing() {
 
 }
 
+function newGame() {
+    if (playerCoins < 100) {
+        alert('The minimum bet is 100 coins. You do not have that amount of coins.');
+    } else {
+        thisBet = 100;
+        dealerHand = [];
+        playerHand = [];
+
+        let appDivDel = document.querySelector('#app');
+        appDivDel.parentElement.removeChild(appDivDel);
+
+        app.innerHTML = '';
+        document.body.appendChild(app);
+
+        firstLoad();
+        renderAppMain();
+    }
+}
+
 // ----- Função do botão QUIT da tela de resultados ----- //
 function quitBtnFunc() {
     dealerHand = [];
