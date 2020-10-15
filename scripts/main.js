@@ -16,13 +16,29 @@ var audioWin = new Audio('../sounds/win.mp3');
 var audioLose = new Audio('../sounds/lose.mp3');
 
 // ----- Points info ----- //
-var pointsInfoContainer = document.createElement('div');
-pointsInfoContainer.setAttribute('class', 'info-coins');
-pointsInfoContainer.innerHTML = `<p>${playerCoins} coins</p>`;
-document.body.appendChild(pointsInfoContainer);
+function renderCoinsInfoContainer() {
+    if (document.querySelector('.info-coins') == null) {
+        // Criar quadro de coins
+        var coinsInfoContainer = document.createElement('div');
+        coinsInfoContainer.setAttribute('class', 'info-coins');
+        coinsInfoContainer.innerHTML = `<p>${playerCoins} coins</p>`;
+        document.body.appendChild(coinsInfoContainer);
+    } else {
+        // Remover quadro de coins
+        const toBeRemoved = document.querySelector('.info-coins')
+        document.body.removeChild(toBeRemoved);
+
+        // Recriar quadro de coins
+        var coinsInfoContainer = document.createElement('div');
+        coinsInfoContainer.setAttribute('class', 'info-coins');
+        coinsInfoContainer.innerHTML = `<p>${playerCoins} coins</p>`;
+        document.body.appendChild(coinsInfoContainer);
+    }
+}
 
 // ----- Carregar primeiras informações ----- //
 firstLoad();
+renderCoinsInfoContainer();
 
 // ----- Função que executa o primeiro carregamento ----- //
 function firstLoad() {
@@ -86,18 +102,22 @@ function compare(player, dealer) {
         audioLose.play();
         divAlert('renderFinalPage(false)', 'You lose!');
         playerCoins = parseInt(playerCoins) - parseInt(thisBet);
+        renderCoinsInfoContainer();
     } else if (dealer > 21) {
         audioWin.play();
         divAlert('renderFinalPage(true)', 'You win!');
         playerCoins = parseInt(playerCoins) + parseInt(thisBet);
+        renderCoinsInfoContainer();
     } else if (player > dealer) {
         audioWin.play();
         divAlert('renderFinalPage(true)', 'You win!');
         playerCoins = parseInt(playerCoins) + parseInt(thisBet);
+        renderCoinsInfoContainer();
     } else {
         audioLose.play();
         divAlert('renderFinalPage(false)', 'You lose!');
         playerCoins = parseInt(playerCoins) - parseInt(thisBet);
+        renderCoinsInfoContainer();
     }
 }
 
@@ -107,10 +127,12 @@ function playerWinChecker() {
         audioLose.play();
         divAlert('renderFinalPage(false)', 'You lose!');
         playerCoins = parseInt(playerCoins) - parseInt(thisBet);
+        renderCoinsInfoContainer();
     } else if (points(playerHand) == 21) {
         audioWin.play();
         divAlert('renderFinalPage(true)', 'You win!');
         playerCoins = parseInt(playerCoins) + parseInt(thisBet);
+        renderCoinsInfoContainer();
     }
 }
 
@@ -331,7 +353,7 @@ function doubleOrNothing() {
 
     firstLoad();
 
-    if (playerCoins > thisBet * 2) {
+    if (playerCoins >= thisBet * 2) {
         thisBet *= 2;
 
         let appDivDel = document.querySelector('#app');
