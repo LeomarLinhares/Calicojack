@@ -3,7 +3,7 @@
     box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.250);
     min-width: 18rem;
     width: 25vw;
-    height: 40vh;
+    height: auto;
 
     justify-self: center;
     align-self: center;
@@ -76,11 +76,15 @@
 #blackBox input {
     margin-top: 4vh;
     height: 4vh;
-    width: 15vw;
+    width: 10rem;
     justify-self: center;
     font-size: 2vh;
 
     grid-area: playername;
+}
+
+#blackBox button {
+    max-height: 2rem;
 }
 
 #blackBox p {
@@ -108,7 +112,7 @@
 
 #coinsInfo {
     font-size: 2.3vh;
-    max-width: 11vw;
+    max-width: 11rem;
 
     text-align: center;
 

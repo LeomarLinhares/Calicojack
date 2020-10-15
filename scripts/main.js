@@ -303,10 +303,10 @@ function renderFinalPage(result) {
 
     if (result == true) {
         divResultMsg.innerHTML = `<p>That's a Calicojack!<br>You win!</p>`;
-        divResultCoins.innerHTML = `<p>Result: 100 coins</p>`;
+        divResultCoins.innerHTML = `<p>Result: ${thisBet} coins</p>`;
     } else {
         divResultMsg.innerHTML = `<p>You lose!</p>`;
-        divResultCoins.innerHTML = `<p>Result: -100 coins</p>`;
+        divResultCoins.innerHTML = `<p>Result: -${thisBet} coins</p>`;
     }
 
     divResultBtn2OrN.innerHTML = 'Double or Nothing';
