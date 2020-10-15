@@ -15,6 +15,12 @@ var audioDraw = new Audio('../sounds/draw.mp3');
 var audioWin = new Audio('../sounds/win.mp3');
 var audioLose = new Audio('../sounds/lose.mp3');
 
+// ----- Points info ----- //
+var pointsInfoContainer = document.createElement('div');
+pointsInfoContainer.setAttribute('class', 'info-coins');
+pointsInfoContainer.innerHTML = `<p>${playerCoins} coins</p>`;
+document.body.appendChild(pointsInfoContainer);
+
 // ----- Carregar primeiras informações ----- //
 firstLoad();
 
@@ -254,7 +260,6 @@ function renderFirstPage() {
     startButton.setAttribute('onclick', 'startBtnFunc()')
     startButton.innerHTML = 'Start!'
     boxName.appendChild(startButton);
-
 }
 
 // ----- Renderizar o jogo, a página principal ----- //
