@@ -295,8 +295,10 @@ function renderAppMain() {
 // ----- Renderizar a tela de resultados, a página final ----- //
 function renderFinalPage(result) {
     // Limpeza do App //
-    document.body.removeChild(divAlertBox);
-    document.body.removeChild(divBlock);
+    const alertBox = document.querySelector('#divAlertBox');
+    if (alertBox) document.body.removeChild(alertBox);
+    const block = document.querySelector('#divBlock');
+    if (block) document.body.removeChild(block);
     let appDivDel = document.querySelector('#app');
     appDivDel.parentElement.removeChild(appDivDel);
 
@@ -431,7 +433,8 @@ function startBtnFunc() {
 
 function backBetBtnFunc() {
     audioClick.play();
-    document.body.removeChild(betAlertBox);
+    const betBox = document.querySelector('#betAlertBox');
+    if (betBox) document.body.removeChild(betBox);
 
     let appDivDel = document.querySelector('#app');
     appDivDel.parentElement.removeChild(appDivDel);
@@ -450,7 +453,8 @@ function confirmBetBtnFunc() {
         alert('The minimum bet is 100 coins.');
     } else {
         thisBet = parseInt(document.querySelector('#inputBet').value);
-        document.body.removeChild(betAlertBox);
+        const betBox = document.querySelector('#betAlertBox');
+        if (betBox) document.body.removeChild(betBox);
 
         let appDivDel = document.querySelector('#app');
         appDivDel.parentElement.removeChild(appDivDel);
